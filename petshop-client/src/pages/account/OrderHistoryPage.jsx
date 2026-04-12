@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { fetchMyOrderHistory, fetchMyOrderById, cancelOrder } from '../../api/orderApi';
 import { createOrderReturn, getAllOrderReturns, getOrderReturnsByOrderId } from '../../api/orderReturnApi';
 import { requestOrderCancellation, getMyCancellationRequests } from '../../api/orderCancellationApi';
+import { createMoMoPayment } from '../../api/paymentGatewayApi';
 import toast from 'react-hot-toast';
 import { 
     EyeIcon, 
@@ -16,7 +17,8 @@ import {
     MagnifyingGlassIcon,
     FunnelIcon,
     XMarkIcon,
-    ArrowPathIcon
+    ArrowPathIcon,
+    BanknotesIcon
 } from '@heroicons/react/24/outline';
 
 export default function OrderHistoryPage() {
@@ -58,20 +60,24 @@ export default function OrderHistoryPage() {
         }
     }, [user, navigate]);
 
+    const isInitialLoad = useRef(true);
+
     // Fetch orders and order returns
     useEffect(() => {
         if (user) {
             loadOrders();
             // Auto-refresh every 30 seconds to sync with admin/staff updates
             const interval = setInterval(() => {
-                loadOrders();
+                loadOrders(true); // silent refresh
             }, 30000);
             return () => clearInterval(interval);
         }
     }, [user, currentPage, statusFilter]);
 
-    const loadOrders = async () => {
-        setLoading(true);
+    const loadOrders = async (silent = false) => {
+        if (!silent && isInitialLoad.current) {
+            setLoading(true);
+        }
         try {
             const params = {
                 page: currentPage,
@@ -105,7 +111,6 @@ export default function OrderHistoryPage() {
                             const returnsResponse = await getOrderReturnsByOrderId(order.id);
                             return returnsResponse.data || [];
                         } catch (error) {
-                            // If user doesn't have access to this order's returns, return empty array
                             return [];
                         }
                     });
@@ -127,10 +132,11 @@ export default function OrderHistoryPage() {
             }
         } catch (error) {
             console.error('Error loading orders:', error);
-            toast.error('Không thể tải lịch sử đơn hàng');
-            setOrders([]);
+            if (!silent) toast.error('Không thể tải lịch sử đơn hàng');
+            if (!silent) setOrders([]);
         } finally {
             setLoading(false);
+            isInitialLoad.current = false;
         }
     };
 
@@ -167,9 +173,39 @@ export default function OrderHistoryPage() {
         }
     };
 
+    // Thanh toán lại cho đơn AwaitingPayment hoặc PaymentFailed
+    const handleRetryPayment = async (orderId) => {
+        const loadingToast = toast.loading('Đang tạo yêu cầu thanh toán...');
+        try {
+            const result = await createMoMoPayment(orderId);
+            if (result.paymentUrl) {
+                toast.dismiss(loadingToast);
+                window.location.href = result.paymentUrl;
+            } else {
+                toast.error('Không nhận được URL thanh toán từ MoMo', { id: loadingToast });
+            }
+        } catch (error) {
+            console.error('Error retrying payment:', error);
+            toast.error(
+                error.response?.data?.message || 'Không thể tạo yêu cầu thanh toán',
+                { id: loadingToast }
+            );
+        }
+    };
+
     // Get status configuration
     const getStatusConfig = (status) => {
         const configs = {
+            AWAITINGPAYMENT: {
+                label: 'Chờ thanh toán',
+                color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300',
+                icon: ClockIcon
+            },
+            PAYMENTFAILED: {
+                label: 'Thanh toán thất bại',
+                color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
+                icon: XCircleIcon
+            },
             PENDING: {
                 label: 'Chờ xử lý',
                 color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300',
@@ -303,6 +339,8 @@ export default function OrderHistoryPage() {
     // Status options for filter
     const statusOptions = [
         { value: 'all', label: 'Tất cả' },
+        { value: 'AWAITINGPAYMENT', label: '⏳ Chờ thanh toán' },
+        { value: 'PAYMENTFAILED', label: '❌ TT thất bại' },
         { value: 'PENDING', label: 'Chờ xử lý' },
         { value: 'CONFIRMED', label: 'Đã xác nhận' },
         { value: 'PROCESSING', label: 'Đang xử lý' },
@@ -428,8 +466,32 @@ export default function OrderHistoryPage() {
                                                         <StatusIcon className="w-4 h-4" />
                                                         {statusConfig.label}
                                                     </span>
+                                                    {/* Badge thanh toán cho đơn online */}
+                                                    {order.paymentStatus && (
+                                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                                            order.paymentStatus === 'Paid' 
+                                                                ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
+                                                                : order.paymentStatus === 'Expired'
+                                                                    ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                                                                    : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
+                                                        }`}>
+                                                            {order.paymentStatus === 'Paid' ? '💳 Đã thanh toán' 
+                                                                : order.paymentStatus === 'Expired' ? '⏰ Hết hạn'
+                                                                : '💳 Chưa thanh toán'}
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div className="flex items-center gap-2 flex-wrap">
+                                                    {/* Nút thanh toán lại cho đơn chờ thanh toán */}
+                                                    {['AwaitingPayment', 'PaymentFailed'].includes(order.status) && order.paymentMethod === 'MOMO' && (
+                                                        <button
+                                                            onClick={() => handleRetryPayment(order.id)}
+                                                            className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors animate-pulse"
+                                                        >
+                                                            <BanknotesIcon className="w-4 h-4" />
+                                                            <span>Thanh toán ngay</span>
+                                                        </button>
+                                                    )}
                                                     <button
                                                         onClick={() => handleViewDetails(order.id)}
                                                         className="flex items-center gap-2 px-4 py-2 bg-indigo-100 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-900/30 transition-colors"

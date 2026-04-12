@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     UserIcon,
@@ -69,10 +69,12 @@ export default function StaffWalkInBookingPage() {
         loadServiceStaff();
     }, []);
 
+    const isStaffInitialLoad = useRef(true);
+
     useEffect(() => {
         // Refresh staff status every 30 seconds
         const interval = setInterval(() => {
-            loadServiceStaff();
+            loadServiceStaff(true); // silent refresh
         }, 30000);
         return () => clearInterval(interval);
     }, []);
@@ -134,8 +136,10 @@ export default function StaffWalkInBookingPage() {
         }
     };
 
-    const loadServiceStaff = async () => {
-        setLoadingStaff(true);
+    const loadServiceStaff = async (silent = false) => {
+        if (!silent && isStaffInitialLoad.current) {
+            setLoadingStaff(true);
+        }
         try {
             const today = new Date();
             const start = new Date(today);
@@ -154,6 +158,7 @@ export default function StaffWalkInBookingPage() {
             console.error('Error loading service staff:', error);
         } finally {
             setLoadingStaff(false);
+            isStaffInitialLoad.current = false;
         }
     };
 

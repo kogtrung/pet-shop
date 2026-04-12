@@ -33,71 +33,53 @@ public class MoMoService : IPaymentGatewayService
 
         var client = _httpClientFactory.CreateClient();
 
-        // MoMo yêu cầu orderId và requestId là duy nhất
-        var orderId = order.Id.ToString();
-        var requestId = Guid.NewGuid().ToString("N");
-        var amount = ((int)order.Total).ToString(); // MoMo dùng số nguyên VNĐ
-        var orderInfo = $"Thanh toan don hang {order.OrderCode ?? order.Id.ToString()}";
+        // MoMo yêu cầu orderId là duy nhất — dùng OrderCode + timestamp suffix để vừa dễ đọc vừa unique
+        var orderCode = order.OrderCode ?? $"ORD{order.Id}";
+        var momoOrderId = $"{orderCode}_{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+        var requestId = Guid.NewGuid().ToString();
+        var amount = ((long)order.Total).ToString(); // MoMo dùng số nguyên VNĐ
+        var orderInfo = $"Thanh toan don hang {orderCode}";
         
-        // QUAN TRỌNG: extraData phải là string rỗng, không được null
         var extraData = string.Empty;
-        const string requestType = "captureWallet";
+        const string requestType = "payWithMethod"; // Theo mẫu MoMo GitHub
 
-        // QUAN TRỌNG: orderInfo trong rawHash PHẢI được URL encode (dấu cách -> %20)
-        // Nhưng trong payload gửi sang MoMo thì orderInfo giữ nguyên (không encode)
-        // ipnUrl và redirectUrl KHÔNG encode trong rawHash
-        var encodedOrderInfo = Uri.EscapeDataString(orderInfo);
-        
-        // Đảm bảo extraData không null
-        if (extraData == null) extraData = string.Empty;
-
-        // Chuỗi raw hash theo tài liệu MoMo - CHỈ orderInfo được URL encode
-        // Thứ tự: accessKey, amount, extraData, ipnUrl, orderId, orderInfo, partnerCode, redirectUrl, requestId, requestType
-        var rawHash =
+        // Chuỗi raw signature theo đúng tài liệu MoMo - KHÔNG encode orderInfo
+        // Thứ tự alphabetical: accessKey, amount, extraData, ipnUrl, orderId, orderInfo, partnerCode, redirectUrl, requestId, requestType
+        var rawSignature =
             $"accessKey={_settings.AccessKey}" +
             $"&amount={amount}" +
-            $"&extraData={extraData ?? string.Empty}" +
+            $"&extraData={extraData}" +
             $"&ipnUrl={_settings.IpnUrl}" +
-            $"&orderId={orderId}" +
-            $"&orderInfo={encodedOrderInfo}" +
+            $"&orderId={momoOrderId}" +
+            $"&orderInfo={orderInfo}" +
             $"&partnerCode={_settings.PartnerCode}" +
             $"&redirectUrl={_settings.RedirectUrl}" +
             $"&requestId={requestId}" +
             $"&requestType={requestType}";
 
-        // Log rawHash để debug - in ra cả console và logger
-        Console.WriteLine("========================================");
-        Console.WriteLine($"MoMo rawHash for order {order.Id}:");
-        Console.WriteLine(rawHash);
-        Console.WriteLine($"MoMo SecretKey: {_settings.SecretKey}");
-        Console.WriteLine($"MoMo SecretKey length: {_settings.SecretKey?.Length ?? 0}");
-        Console.WriteLine("========================================");
-        
-        _logger.LogInformation("MoMo rawHash for order {OrderId}: {RawHash}", order.Id, rawHash);
-        _logger.LogInformation("MoMo SecretKey length: {Length}", _settings.SecretKey?.Length ?? 0);
+        // Log để debug (KHÔNG log SecretKey)
+        _logger.LogInformation("MoMo rawSignature for order {OrderId}: {RawSignature}", order.Id, rawSignature);
 
-        var signature = ComputeHmacSha256(rawHash, _settings.SecretKey);
-        
-        // Log signature để debug - in ra cả console và logger
-        Console.WriteLine($"MoMo signature for order {order.Id}: {signature}");
-        Console.WriteLine("========================================");
+        var signature = ComputeHmacSha256(rawSignature, _settings.SecretKey);
         
         _logger.LogInformation("MoMo signature for order {OrderId}: {Signature}", order.Id, signature);
 
         var payload = new
         {
             partnerCode = _settings.PartnerCode,
-            partnerName = "MoMo",
+            partnerName = "MoMo Payment",
             storeId = "PetShop",
             requestId,
             amount,
-            orderId,
+            orderId = momoOrderId,
             orderInfo,
             redirectUrl = _settings.RedirectUrl,
             ipnUrl = _settings.IpnUrl,
             lang = "vi",
             requestType,
-            extraData = extraData ?? string.Empty,
+            extraData,
+            orderGroupId = "",
+            autoCapture = true,
             signature
         };
 
@@ -116,7 +98,7 @@ public class MoMoService : IPaymentGatewayService
         var data = System.Text.Json.JsonDocument.Parse(json).RootElement;
         var resultCode = data.GetProperty("resultCode").GetInt32();
         var payUrl = data.GetProperty("payUrl").GetString() ?? string.Empty;
-        var momoOrderId = data.GetProperty("orderId").GetString() ?? orderId;
+        var responseOrderId = data.GetProperty("orderId").GetString() ?? momoOrderId;
 
         if (resultCode != 0 || string.IsNullOrEmpty(payUrl))
         {
@@ -128,7 +110,7 @@ public class MoMoService : IPaymentGatewayService
         var transaction = new PaymentTransaction
         {
             OrderId = order.Id,
-            TransactionId = momoOrderId,
+            TransactionId = responseOrderId,
             Gateway = "MoMo",
             PaymentMethod = "MOMO",
             Amount = order.Total,
@@ -149,10 +131,8 @@ public class MoMoService : IPaymentGatewayService
 
     public async Task<PaymentResult> ProcessPaymentCallbackAsync(IDictionary<string, string> callbackData)
     {
-        // Trong giai đoạn đầu, ta chỉ kiểm tra resultCode và cập nhật trạng thái,
-        // phần verify chữ ký có thể bổ sung chi tiết hơn sau nếu cần.
-        if (!callbackData.TryGetValue("orderId", out var orderIdStr) ||
-            !int.TryParse(orderIdStr, out var orderId))
+        // orderId từ MoMo callback giờ là GUID (không phải database ID)
+        if (!callbackData.TryGetValue("orderId", out var momoOrderId) || string.IsNullOrEmpty(momoOrderId))
         {
             return new PaymentResult
             {
@@ -164,39 +144,52 @@ public class MoMoService : IPaymentGatewayService
         callbackData.TryGetValue("resultCode", out var resultCodeStr);
         var success = resultCodeStr == "0";
 
-        var order = await _db.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+        // Tìm transaction bằng TransactionId (chính là momoOrderId - GUID)
+        var transaction = await _db.PaymentTransactions
+            .FirstOrDefaultAsync(t => t.TransactionId == momoOrderId && t.Gateway == "MoMo");
+
+        if (transaction == null || transaction.OrderId == null)
+        {
+            return new PaymentResult
+            {
+                Success = false,
+                ErrorMessage = $"Transaction for MoMo orderId '{momoOrderId}' not found"
+            };
+        }
+
+        // Tìm order thông qua transaction
+        var order = await _db.Orders.FirstOrDefaultAsync(o => o.Id == transaction.OrderId);
         if (order == null)
         {
             return new PaymentResult
             {
                 Success = false,
-                ErrorMessage = $"Order {orderId} not found"
+                ErrorMessage = $"Order {transaction.OrderId} not found"
             };
         }
 
-        // Tìm transaction tương ứng
-        var transaction = await _db.PaymentTransactions
-            .OrderByDescending(t => t.Id)
-            .FirstOrDefaultAsync(t => t.OrderId == orderId && t.Gateway == "MoMo");
-
         var now = DateTime.UtcNow;
 
-        if (transaction != null)
+        transaction.GatewayResponse = System.Text.Json.JsonSerializer.Serialize(callbackData);
+        transaction.CompletedAt = now;
+        transaction.Status = success ? "Success" : "Failed";
+        if (!success)
         {
-            transaction.GatewayResponse = System.Text.Json.JsonSerializer.Serialize(callbackData);
-            transaction.CompletedAt = now;
-            transaction.Status = success ? "Success" : "Failed";
-            if (!success)
-            {
-                callbackData.TryGetValue("message", out var message);
-                transaction.FailureReason = message;
-            }
+            callbackData.TryGetValue("message", out var message);
+            transaction.FailureReason = message;
         }
 
         if (success)
         {
+            // Thanh toán thành công → Đơn chuyển sang Pending (sẵn sàng cho staff xử lý)
             order.PaymentStatus = "Paid";
-            order.Status = "Confirmed";
+            order.Status = "Pending";
+        }
+        else
+        {
+            // Thanh toán thất bại → Đơn chuyển sang PaymentFailed
+            order.PaymentStatus = "Unpaid";
+            order.Status = "PaymentFailed";
         }
 
         await _db.SaveChangesAsync();
@@ -204,7 +197,7 @@ public class MoMoService : IPaymentGatewayService
         return new PaymentResult
         {
             Success = success,
-            TransactionId = transaction?.TransactionId,
+            TransactionId = transaction.TransactionId,
             OrderId = order.Id,
             ErrorMessage = success ? null : "Payment failed"
         };

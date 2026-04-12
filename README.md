@@ -1,240 +1,189 @@
-# 🐾 PetShop Platform - Hệ Thống Quản Lý Cửa Hàng Thú Cưng
+<div align="center">
 
-![Project Status](https://img.shields.io/badge/status-active-success.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)
+# 🐾 PetShop Platform
+### Hệ Thống Quản Lý Cửa Hàng Thú Cưng Đa Nền Tảng
 
-> **PetShop Platform** là giải pháp toàn diện cho việc quản lý và vận hành cửa hàng thú cưng, kết hợp sức mạnh của **ASP.NET Core 8 Web API** và giao diện hiện đại **React + Vite**. Hệ thống cung cấp trải nghiệm mua sắm mượt mà cho khách hàng và công cụ quản trị mạnh mẽ cho đội ngũ vận hành.
+[![.NET 9](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/)
+[![React 19](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![SQL Server](https://img.shields.io/badge/SQL_Server-2022-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)](https://microsoft.com/sql-server)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
----
+> **PetShop Platform** là giải pháp phần mềm One-Stop-Shop (Tất cả trong một) dành cho các trung tâm thú cưng, spa, và phòng khám thú y. Khai thác sức mạnh của hệ sinh thái phần mềm hiện đại **.NET 9** (Backend) và **React 19** (Frontend), tích hợp **Trí Tuệ Nhân Tạo (AI)** và cổng thanh toán nội địa uy tín.
 
-## 🧭 Mục Lục
-
-- [✨ Tính Năng Nổi Bật](#-tính-năng-nổi-bật)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [🏗️ Kiến Trúc Hệ Thống](#️-kiến-trúc-hệ-thống)
-- [🧰 Yêu Cầu Hệ Thống](#-yêu-cầu-hệ-thống)
-- [⚙️ Cài Đặt & Cấu Hình](#️-cài-đặt--cấu-hình)
-- [🚀 Hướng Dẫn Khởi Chạy](#-hướng-dẫn-khởi-chạy)
-- [🧪 Quy Trình Phát Triển](#-quy-trình-phát-triển)
-- [🔐 Phân Quyền & Bảo Mật](#-phân-quyền--bảo-mật)
-- [📦 Module Nghiệp Vụ](#-module-nghiệp-vụ)
-- [📚 Tài Liệu Tham Khảo](#-tài-liệu-tham-khảo)
-- [🤝 Đóng Góp](#-đóng-góp)
+</div>
 
 ---
 
-## ✨ Tính Năng Nổi Bật
+## 📑 Mục Lục
+- [🌟 Tính Năng Nổi Bật](#-tính-năng-nổi-bật)
+- [🛠️ Công Nghệ Sử Dụng (Tech Stack)](#️-công-nghệ-sử-dụng-tech-stack)
+- [🏗️ Kiến Trúc Hệ Thống & Module Chức Năng](#️-kiến-trúc-hệ-thống--module-chức-năng)
+- [🎭 Trải Nghiệm Người Dùng (Phân Quyền RBAC)](#-trải-nghiệm-người-dùng-phân-quyền-rbac)
+- [🧰 Yêu Cầu Cài Đặt (Prerequisites)](#-yêu-cầu-cài-đặt-prerequisites)
+- [🚀 Hướng Dẫn Cài Đặt & Chạy Môi Trường Local](#-hướng-dẫn-cài-đặt--chạy-môi-trường-local)
+- [🔐 Biến Môi Trường (Environment Setup)](#-biến-môi-trường-environment-setup)
+- [📸 Thư Viện Giao Diện (Screenshots)](#-thư-viện-giao-diện-screenshots)
+- [🤝 Đóng Góp (Contributing)](#-đóng-góp-contributing)
 
-| Tính Năng | Mô Tả |
+---
+
+## 🌟 Tính Năng Nổi Bật
+
+| Cấu Phần | Đặc Điểm Cốt Lõi |
 | :--- | :--- |
-| **🛒 E-commerce** | Catalog sản phẩm, giỏ hàng, đặt hàng, quản lý đơn hàng. |
-| **📅 Booking Dịch Vụ** | Đặt lịch spa/chăm sóc thú cưng, quản lý slot, tính giá tự động. |
-| **💬 AI Chatbot** | Trợ lý ảo (tích hợp **Gemini AI**) tư vấn sản phẩm và chăm sóc thú cưng. |
-| **💳 Thanh Toán** | Tích hợp cổng thanh toán **MoMo** an toàn, tiện lợi. |
-| **📧 Email Service** | Gửi email xác nhận đơn hàng, thông báo, newsletter tự động. |
-| **👤 Quản Lý User** | Phân quyền chi tiết (Admin, Staff, User), hồ sơ cá nhân, lịch sử mua hàng. |
-| **⭐ Tương Tác** | Đánh giá sản phẩm, Yêu thích (Wishlist), Bình luận. |
-| **📝 CMS** | Quản lý nội dung trang tĩnh, bài viết tin tức. |
+| **🛍️ Cửa Hàng E-Commerce** | Quản lý sản phẩm đa hệ, giỏ hàng, tích hợp lọc & tìm kiếm thông minh, tính trực tiếp phí gửi hàng/khuyến mãi. |
+| **🗓️ Hệ Thống Booking Dịch Vụ** | Đặt lịch **Spa/Chăm sóc**, theo dõi "Walk-In Booking" tại quầy, tự động phân công nhân sự theo ca trực, tích điểm. |
+| **💳 Thanh Toán Trực Tuyến** | Tích hợp sâu **Ví điện tử MoMo**, webhook an toàn, xử lý tự động hoàn trả (refund) / huỷ lệnh thanh toán (Timeout 15 mins). |
+| **🔄 Xử Lý Đơn Hàng Thông Minh** | Quy trình Hủy/Đổi/Trả đơn tiêu chuẩn, đối soát công nợ, in biên lai/hóa đơn tự động ngay trên trình duyệt. |
+| **🤖 Trợ Lý Ảo Chatbot AI** | Tích hợp **Google Gemini AI SDK**, học dữ liệu chuyên khảo thú y, đưa ra lời khuyên chăm sóc thú cưng 24/7. |
+| **📧 Giao Tiếp Đa Kênh** | Automated Email Marketing qua **MailKit (SMTP)** thông báo xác thực, hoá đơn, khôi phục mật khẩu. |
+| **📊 Quản Trị Trung Tâm (Dashboard)**| Báo cáo doanh thu thời gian thực, bảng điều khiển với Micro-interactions chống lag (Silent Refresh Polling). |
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Công Nghệ Sử Dụng (Tech Stack)
 
-### Backend (`PetShopAPI`)
-- **Framework:** [.NET 8](https://dotnet.microsoft.com/) (ASP.NET Core Web API)
-- **Database:** [SQL Server](https://www.microsoft.com/sql-server) + [Entity Framework Core 8](https://learn.microsoft.com/ef/core/)
-- **Authentication:** JWT (JSON Web Tokens) + ASP.NET Core Identity
-- **AI Integration:** [Google Generative AI SDK](https://ai.google.dev/) (Gemini)
-- **Email:** MailKit / MimeKit
-- **Payment:** MoMo Payment Gateway Integration
-- **Documentation:** Swagger / OpenAPI
+Hệ thống được tối ưu hóa cho hiệu năng cao, mở rộng linh hoạt, chia thành 2 sub-repositories chính.
 
-### Frontend (`petshop-client`)
-- **Framework:** [React 19](https://react.dev/) + [Vite](https://vitejs.dev/)
-- **Language:** JavaScript (ES Modules)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/) + PostCSS
-- **UI Components:** Headless UI / Heroicons
-- **State/Routing:** React Router DOM v7
-- **HTTP Client:** Axios
-- **Editor:** TinyMCE React (cho CMS)
-- **Animations:** Framer Motion
+### 💻 Backend (Thư mục `PetShopAPI/`)
+- Môi trường: `.NET 9 SDK` & `ASP.NET Core Web API`
+- Cơ sở dữ liệu: `SQL Server 2022+` & `Entity Framework Core 9`
+- Phân quyền: `ASP.NET Identity` kết hợp `JSON Web Tokens (JWT)` Auth.
+- API Documentation: `Swagger / OpenAPI`
+- Tích hợp nội dung ngoài: `Google.GenerativeAI (Gemini NLP)`, `MoMo Payment Gateway SDK`, `MailKit / MimeKit`
+
+### 🎨 Frontend (Thư mục `petshop-client/`)
+- Môi trường: `NodeJS` với Engine `Vite` cực nhanh
+- Framework: `React 19` (Functional Components & Hooks nguyên bản)
+- Giao diện (UI/UX): `Tailwind CSS 3.4`, `Heroicons`, `Framer Motion` (Animation)
+- Mạng / Tương tác API: `Axios` (Interceptors config), `React Router 7`
+- Quản trị nội dung text (CMS): `TinyMCE React` Editor
 
 ---
 
-## 🏗️ Kiến Trúc Hệ Thống
+## 🏗️ Kiến Trúc Hệ Thống & Module Chức Năng
 
-Hệ thống được thiết kế theo mô hình **Client-Server** tách biệt:
+PetShop sử dụng kiến trúc **Client-Server độc lập**, trao đổi bằng **RESTful API Endpoint**. Phân chia các domain cụ thể:
 
-1.  **Client (Frontend):** SPA (Single Page Application) viết bằng React, giao tiếp với Server qua RESTful API.
-2.  **Server (Backend):** Web API xử lý nghiệp vụ, xác thực, và tương tác với Database/Services bên thứ 3.
-3.  **Database:** SQL Server lưu trữ dữ liệu quan hệ.
-4.  **External Services:**
-    *   **Google Gemini:** Xử lý NLP cho Chatbot.
-    *   **MoMo:** Xử lý giao dịch thanh toán.
-    *   **SMTP Server (Gmail):** Gửi email thông báo.
+1. **Product Catalog Module:** Lưu trữ Categories, Brands, Reviews.
+2. **Order Management System (OMS):** Lifecycle đơn hàng, tạo Invoice, Yêu cầu Trả hàng (Returns), Background Tasks (Hủy đơn quá hạn thanh toán).
+3. **Staff Shift & Availability:** Quản lý ca trực, kiểm tra trạng thái **Bận/Rảnh** của nhân sự để tránh trùng lặp Booking.
+4. **CRM & Activity Tracking:** Audit logs, đánh giá sản phẩm, quản lý tệp khách hàng.
 
 ---
 
-## 🧰 Yêu Cầu Hệ Thống
+## 🎭 Trải Nghiệm Người Dùng (Phân Quyền RBAC)
 
-Trước khi cài đặt, đảm bảo máy bạn đã có:
-
-*   **Runtime:** [.NET SDK 8.0+](https://dotnet.microsoft.com/download)
-*   **Runtime:** [Node.js 18+](https://nodejs.org/) (Khuyến nghị bản LTS)
-*   **Database:** [SQL Server 2019+](https://www.microsoft.com/sql-server/sql-server-downloads) (Express hoặc Developer)
-*   **Tools:** [Git](https://git-scm.com/), VS Code hoặc Visual Studio 2022.
+| Vai trò | Phân quyền truy cập |
+| :--- | :--- |
+| **👤 Khách Viếng Thăm** | Xem danh mục sản phẩm, theo dõi bài viết, trò chuyện AI Chatbot tư vấn, Đăng ký/đăng nhập. |
+| **🧑‍💻 Khách Hàng (User)** | Quản lý profile, đặt hàng/lịch hẹn, theo dõi trạng thái, thanh toán MoMo, Đổi trả hàng hóa, tích lũy điểm thẻ. |
+| **👨‍💼 Nhân Viên Bán Hàng** | Truy cập POS Sale, Walk-In Booking, xử lý đơn hàng/hóa đơn, tạo phiếu đổi trả, kiểm tra tồn kho. |
+| **🛠️ Phụ Tá Dịch Vụ** | Dashboard theo dõi phân công lịch chăm sóc, cập nhật trạng thái "Hoàn thành" công việc, xem lịch làm việc. |
+| **👑 Quản Trị Viên (Admin)** | Toàn quyền kiểm soát hệ thống, CRUD Users, Dashboard báo cáo tài chính, thiết lập Master Data (Khuyến mãi, Banner, Dịch vụ). |
 
 ---
 
-## ⚙️ Cài Đặt & Cấu Hình
+## 🧰 Yêu Cầu Cài Đặt (Prerequisites)
 
-### 1. Clone Dự Án
+Hãy đảm bảo thiết bị của bạn đã cài đặt các thành phần nền tảng:
 
+- `Git` bản mới nhất.
+- [.NET 9.0 SDK](https://dotnet.microsoft.com/download)
+- [Node.js 18+](https://nodejs.org/) hoặc [20.x LTS](https://nodejs.org/)
+- [SQL Server Developer/Express](https://www.microsoft.com/sql-server/sql-server-downloads) & SSMS / Azure Data Studio.
+- IDE tuỳ chọn: `Visual Studio 2022` hoặc `Visual Studio Code`.
+
+---
+
+## 🚀 Hướng Dẫn Cài Đặt & Chạy Môi Trường Local
+
+Clone dự án với Git:
 ```bash
-git clone https://github.com/username/PetShop.git
-cd PetShop
+git clone https://github.com/kogtrung/pet-shop.git
+cd pet-shop
 ```
 
-### 2. Cấu Hình Backend (`PetShopAPI`)
+### 1️⃣ Khởi Chạy Backend API
+Mở cửa sổ terminal, điều hướng đến phân vùng `PetShopAPI`:
 
-Dự án sử dụng cơ chế nạp biến môi trường từ file `.env` để bảo mật.
+```bash
+cd PetShopAPI
 
-1.  Tạo file `.env` tại thư mục gốc `PetShop/` hoặc `PetShop/PetShopAPI/`.
-2.  Copy nội dung từ `.env.example` và điền giá trị thật của bạn:
+# 1. Cài đặt các packages/dependencies
+dotnet restore
 
+# 2. Sinh lịch sử Migration Data
+dotnet ef migrations add InitialBaseline
+
+# 3. Áp dụng Model vào CSDL SQL Server
+dotnet ef database update
+
+# 4. Khởi chạy Server (Mặc định Port 5200)
+dotnet run
+```
+👉 Truy cập **Swagger API Testing Docs**: `http://localhost:5200/swagger`
+
+### 2️⃣ Khởi Chạy Frontend Client
+Mở cửa sổ terminal phân vùng `petshop-client`:
+
+```bash
+cd petshop-client
+
+# 1. Cài đặt Node Modules (Lần đầu)
+npm install
+
+# 2. Chạy môi trường Development với Vite
+npm run dev
+```
+👉 Truy cập **PetShop Web Application**: `http://localhost:5173`
+
+---
+
+## 🔐 Biến Môi Trường (Environment Setup)
+
+Hệ thống thiết lập thông qua tệp `.env` để bảo đảm tuân thủ chu trình phát triển (GitIgnore).
+
+**Tệp `PetShopAPI/.env` (Tạo mới):**
 ```env
-# Database
-ConnectionStrings__Default=Server=localhost;Database=PetShopDbb;Trusted_Connection=True;TrustServerCertificate=True;
+# 🐘 SQL Server Connection String
+ConnectionStrings__Default=Server=localhost;Database=PetShopDb;Trusted_Connection=True;TrustServerCertificate=True;
 
-# JWT (Bắt buộc thay đổi key này)
-Jwt__Key=YOUR_VERY_SECURE_SECRET_KEY_MIN_32_CHARS
+# 🔑 Thiết lập Bảo mật Authenticator
+Jwt__Key=CHUOI_KY_TU_RAT_BAO_MAT_TREN_32_KY_TU__API_PETSHOP
 Jwt__Issuer=PetShopAPI
 Jwt__Audience=PetShopClient
 
-# API Keys & Services
-ApiKeys__Gemini=YOUR_GEMINI_API_KEY
+# 📡 Cloud API Keys (Lấy tại Dev Console)
+ApiKeys__Gemini=YOUR_GOOGLE_GEMINI_API_KEY
 MoMo__PartnerCode=MOMO
 MoMo__AccessKey=YOUR_MOMO_ACCESS_KEY
 MoMo__SecretKey=YOUR_MOMO_SECRET_KEY
 
-# Email (SMTP)
-EmailSettings__SmtpUsername=your_email@gmail.com
-EmailSettings__SmtpPassword=your_app_password
+# 📨 SMTP Email Service (Cấu hình Gmail App Password)
+EmailSettings__SmtpUsername=admin_petshop@gmail.com
+EmailSettings__SmtpPassword=xxxxxxxxxxxx
 ```
 
-### 3. Cấu Hình Frontend (`petshop-client`)
-
-1.  Di chuyển vào thư mục frontend: `cd petshop-client`
-2.  Tạo file `.env` từ `.env.example`:
-
+**Tệp `petshop-client/.env` (Tạo mới):**
 ```env
 VITE_API_BASE_URL=http://localhost:5200
 ```
 
 ---
 
-## 🚀 Hướng Dẫn Khởi Chạy
+## 🤝 Đóng Góp (Contributing)
 
-### Bước 1: Khởi Chạy Database & Backend
+Đội ngũ chúng tôi rất sẵn sàng đón nhận những đóng góp, vá lỗi đến từ thành viên tổ chức open-source.
 
-```bash
-cd PetShopAPI
-
-# Khôi phục các thư viện
-dotnet restore
-
-# Tạo migration baseline local (khi repo không lưu migration cũ)
-dotnet ef migrations add InitialBaseline
-
-# Cập nhật Database
-dotnet ef database update
-
-# Chạy ứng dụng
-dotnet run
-```
-
-*   **API URL:** `http://localhost:5200`
-*   **Swagger Docs:** `http://localhost:5200/swagger`
-
-### Bước 2: Khởi Chạy Frontend
-
-Mở một terminal mới:
-
-```bash
-cd petshop-client
-
-# Cài đặt thư viện (chỉ cần lần đầu)
-npm install
-
-# Chạy server phát triển
-npm run dev
-```
-
-*   **Web URL:** `http://localhost:5173`
+1. Khởi tạo một bản `Fork` lưu trữ.
+2. Thiết lập nhánh chức năng độc lập: `git checkout -b feature/AdvancedCart`.
+3. Lưu bản commit hoàn chỉnh: `git commit -m 'feat: Add Advanced Cart Calculation'`.
+4. Gửi mã lên hệ thống lưu trữ Github: `git push origin feature/AdvancedCart`.
+5. Thiết lập **Pull Request** cho quản trị viên xem xét. 
 
 ---
-
-## 🧪 Quy Trình Phát Triển
-
-Để đảm bảo chất lượng code và tránh lỗi:
-
-1.  **Backend:**
-    *   Khi thay đổi Model (`Models/`), hãy tạo Migration mới: `dotnet ef migrations add <TenMigration>`.
-    *   Cập nhật Database: `dotnet ef database update`.
-    *   Cập nhật DTO và Controller tương ứng.
-2.  **Frontend:**
-    *   Kiểm tra `VITE_API_BASE_URL` trỏ đúng port backend.
-    *   Sử dụng Tailwind CSS cho styling.
-3.  **Documentation:**
-    *   Cập nhật file `API_SPECIFICATION.md` nếu có thay đổi về Endpoint API.
-
----
-
-## 🔐 Phân Quyền & Bảo Mật
-
-Hệ thống sử dụng **Role-Based Access Control (RBAC)**:
-
-*   **Anonymous (Khách):** Xem sản phẩm, bài viết, chat với AI.
-*   **User (Thành viên):** Đặt hàng, đặt lịch, quản lý hồ sơ, đánh giá, wishlist.
-*   **Staff (Nhân viên):** Xử lý đơn hàng, quản lý kho, quản lý booking.
-*   **Admin (Quản trị):** Toàn quyền hệ thống (User, CMS, Cấu hình).
-
-**Lưu ý bảo mật:**
-*   File `appsettings.json` không chứa secrets (chỉ có placeholder).
-*   Không commit file `.env` chứa key thật lên Git.
-
----
-
-## 📦 Module Nghiệp Vụ
-
-Chi tiết các module chính trong hệ thống:
-
-*   **🛍️ Catalog:** Quản lý Sản phẩm (Product), Thương hiệu (Brand), Danh mục (Category), Thuộc tính (Attributes).
-*   **📦 Inventory:** Quản lý tồn kho, nhập/xuất kho, cảnh báo sắp hết hàng.
-*   **🧾 Order:** Quy trình đặt hàng, thanh toán, trạng thái đơn hàng, hoàn/hủy đơn.
-*   **📅 Service Booking:** Quản lý dịch vụ (Spa, Hotel), gói dịch vụ, lịch hẹn.
-*   **⭐ Engagement:** Đánh giá (Review), Yêu thích (Wishlist), Phản hồi.
-*   **📰 Marketing:** Bản tin (Newsletter), Khuyến mãi (Promotion).
-*   **🤖 AI Support:** Chatbot tư vấn ngữ cảnh, gợi ý sản phẩm.
-
----
-
-## 📚 Tài Liệu Tham Khảo
-
-*   📖 [**API Specification**](./PetShopAPI/API_SPECIFICATION.md): Tài liệu chi tiết về các Endpoints, Request/Response mẫu.
-*   📁 Mã nguồn frontend: `petshop-client/`.
-
----
-
-## 🤝 Đóng Góp
-
-Mọi đóng góp đều được hoan nghênh! Vui lòng thực hiện theo các bước:
-
-1.  Fork dự án.
-2.  Tạo branch tính năng (`git checkout -b feature/AmazingFeature`).
-3.  Commit thay đổi (`git commit -m 'Add some AmazingFeature'`).
-4.  Push lên branch (`git push origin feature/AmazingFeature`).
-5.  Tạo Pull Request.
-
----
+<div align="center">
+  <i>Được thiết kế cho thế giới diệu kỳ của thú cưng ❤️ Developed by PetShop Team</i>
+</div>

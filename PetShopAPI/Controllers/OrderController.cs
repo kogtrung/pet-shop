@@ -374,20 +374,23 @@ public class OrderController : ControllerBase
             // Calculate total: subtotal - discount + shipping fee
             var total = subTotal - discountAmount + shippingFee;
 
-            // Determine payment status based on payment method
-            // COD/CASH: Unpaid (will be paid when order status becomes Completed)
-            // Online payment methods (MOMO, VNPAY, CREDIT_CARD, BANK_TRANSFER): Unpaid initially
-            // Payment status will be updated:
-            // - COD/CASH: Auto-updated to Paid when order status becomes Completed
-            // - Online: Updated to Paid after payment gateway confirms payment (via callback)
+            // Determine payment status and order status based on payment method
+            // COD/CASH: Status = "Pending" (ready for staff), PaymentStatus = "Unpaid"
+            // Online payment (MOMO, VNPAY, CREDIT_CARD, BANK_TRANSFER): 
+            //   Status = "AwaitingPayment" (not visible to staff until paid)
+            //   PaymentStatus = "Unpaid"
+            //   After payment success → Status = "Pending", PaymentStatus = "Paid"
             var paymentStatus = "Unpaid";
+            var isOnlinePayment = dto.PaymentMethod == "MOMO" || dto.PaymentMethod == "VNPAY" 
+                || dto.PaymentMethod == "CREDIT_CARD" || dto.PaymentMethod == "BANK_TRANSFER";
+            var orderStatus = isOnlinePayment ? "AwaitingPayment" : "Pending";
 
             // Create the order first
             var order = new Order
             {
                 OrderCode = orderCode,
                 CustomerId = userId,
-                Status = "Pending",
+                Status = orderStatus,
                 PaymentMethod = dto.PaymentMethod,
                 PaymentStatus = paymentStatus,
                 ShippingAddress = dto.ShippingAddress,
