@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { fetchAllOrders, fetchOrderById, updateOrderStatus } from '../../api/orderApi';
 import { getAllOrderReturns, getOrderReturnsByOrderId, createOrderReturn, updateOrderReturnStatus } from '../../api/orderReturnApi';
 import { fetchProducts } from '../../api/productApi';
@@ -45,13 +45,15 @@ export default function StaffOrdersPage() {
         adminNote: ''
     });
 
+    const isInitialLoad = useRef(true);
+
     useEffect(() => {
         loadOrders();
         loadOrderReturns();
         loadCancellationRequests();
         // Auto-refresh every 30 seconds to sync with admin and user updates
         const interval = setInterval(() => {
-            loadOrders();
+            loadOrders(true);
             loadOrderReturns();
         }, 30000);
         return () => clearInterval(interval);
@@ -103,17 +105,20 @@ export default function StaffOrdersPage() {
         return cancellationRequests.find(c => c.orderId === orderId);
     };
 
-    const loadOrders = async () => {
-        setLoading(true);
+    const loadOrders = async (silent = false) => {
+        if (!silent && isInitialLoad.current) {
+            setLoading(true);
+        }
         try {
             const response = await fetchAllOrders();
             const orders = response.data?.items || response.data || [];
             setOrders(orders);
         } catch (error) {
             console.error('Error loading orders:', error);
-            toast.error('Không thể tải danh sách đơn hàng');
+            if (!silent) toast.error('Không thể tải danh sách đơn hàng');
         } finally {
             setLoading(false);
+            isInitialLoad.current = false;
         }
     };
 

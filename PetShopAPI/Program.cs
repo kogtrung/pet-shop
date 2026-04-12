@@ -93,6 +93,9 @@ builder.Services.AddScoped<IPaymentGatewayService, MoMoService>();
 // 8. Đăng ký Background Service cho Email Reminders
 builder.Services.AddHostedService<BookingReminderService>();
 
+// 8.1 Đăng ký Background Service tự động hủy đơn hàng online hết hạn thanh toán
+builder.Services.AddHostedService<OrderPaymentCleanupService>();
+
 // 9. Đăng ký API Explorer cho ChatController
 builder.Services.AddEndpointsApiExplorer();
 

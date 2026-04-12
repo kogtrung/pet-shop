@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllServiceBookings, getStaffAvailability } from '../../api/serviceBookingApi.js';
 import { getServices } from '../../api/serviceApi.js';
@@ -177,22 +177,26 @@ export default function ServiceStaffDashboardPage() {
     const [lastCheckedIds, setLastCheckedIds] = useState(new Set());
     const [dutyInfo, setDutyInfo] = useState(null);
 
+    const isInitialLoad = useRef(true);
+
     useEffect(() => {
         loadDashboard();
         // Auto-refresh every 30 seconds
         const interval = setInterval(() => {
-            loadDashboard();
+            loadDashboard(true); // silent refresh
         }, 30000);
         return () => clearInterval(interval);
     }, [user]);
 
-    const loadDashboard = async () => {
-        setLoading(true);
+    const loadDashboard = async (silent = false) => {
+        if (!silent && isInitialLoad.current) {
+            setLoading(true);
+        }
         try {
             const [bookingRes, serviceRes] = await Promise.all([
                 getAllServiceBookings().catch(err => {
                     console.error('Error loading bookings:', err);
-                    if (err.response?.status === 401 || err.response?.status === 403) {
+                    if (!silent && (err.response?.status === 401 || err.response?.status === 403)) {
                         toast.error('Bạn không có quyền xem lịch đặt. Vui lòng đăng nhập lại.');
                     }
                     return { data: [] };
@@ -239,7 +243,6 @@ export default function ServiceStaffDashboardPage() {
             if (user?.id) {
                 const assignedToMe = bookingsList.filter(booking => {
                     const status = (booking.status || '').toLowerCase();
-                    // Only count bookings with "Assigned" status
                     if (status !== 'assigned') return false;
                     return booking.bookingItems?.some(item => item.assignedStaffId === user.id);
                 });
@@ -298,10 +301,13 @@ export default function ServiceStaffDashboardPage() {
             }
         } catch (error) {
             console.error('Failed to load dashboard stats', error);
-            const errorMessage = error.response?.data?.error || 'Không thể tải tổng quan dịch vụ';
-            toast.error(errorMessage);
+            if (!silent) {
+                const errorMessage = error.response?.data?.error || 'Không thể tải tổng quan dịch vụ';
+                toast.error(errorMessage);
+            }
         } finally {
             setLoading(false);
+            isInitialLoad.current = false;
         }
     };
 

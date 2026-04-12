@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { fetchAllOrders, fetchOrderById, updateOrderStatus, deleteOrder } from '../../api/orderApi';
 import toast from 'react-hot-toast';
 import Button from '../../components/common/Button';
@@ -48,17 +48,21 @@ export default function ManageOrdersPage() {
     // Selection for bulk operations
     const [selectedOrderIds, setSelectedOrderIds] = useState([]);
 
+    const isInitialLoad = useRef(true);
+
     useEffect(() => {
         loadOrders();
         // Auto-refresh every 30 seconds to sync with other users
         const interval = setInterval(() => {
-            loadOrders();
+            loadOrders(true); // silent refresh
         }, 30000);
         return () => clearInterval(interval);
     }, [currentPage, paymentFilter, dateFilter, sortBy, sortOrder]);
 
-    const loadOrders = async () => {
-        setLoading(true);
+    const loadOrders = async (silent = false) => {
+        if (!silent && isInitialLoad.current) {
+            setLoading(true);
+        }
         try {
             const params = {
                 page: currentPage,
@@ -83,10 +87,11 @@ export default function ManageOrdersPage() {
             }
         } catch (error) {
             console.error('Error loading orders:', error);
-            toast.error('Không thể tải danh sách đơn hàng');
-            setOrders([]);
+            if (!silent) toast.error('Không thể tải danh sách đơn hàng');
+            if (!silent) setOrders([]);
         } finally {
             setLoading(false);
+            isInitialLoad.current = false;
         }
     };
 
@@ -179,6 +184,16 @@ export default function ManageOrdersPage() {
     const getStatusConfig = (status) => {
         const statusUpper = status?.toUpperCase();
         const configs = {
+            AWAITINGPAYMENT: {
+                label: 'Chờ thanh toán',
+                color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300',
+                icon: ClockIcon
+            },
+            PAYMENTFAILED: {
+                label: 'TT thất bại',
+                color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
+                icon: XCircleIcon
+            },
             PENDING: {
                 label: 'Chờ xử lý',
                 color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300',
@@ -241,8 +256,13 @@ export default function ManageOrdersPage() {
                 color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300',
                 icon: ClockIcon
             },
+            EXPIRED: {
+                label: 'Hết hạn TT',
+                color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300',
+                icon: ClockIcon
+            },
             FAILED: {
-                label: 'Thanh toán thất bại',
+                label: 'TT thất bại',
                 color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
                 icon: XCircleIcon
             },
@@ -370,6 +390,8 @@ export default function ManageOrdersPage() {
     const statusOptions = [
         { value: 'all', label: 'Tất cả trạng thái' },
         ...(activeTab === 'online' ? [
+            { value: 'AwaitingPayment', label: '⏳ Chờ thanh toán' },
+            { value: 'PaymentFailed', label: '❌ TT thất bại' },
             { value: 'Pending', label: 'Chờ xử lý' },
             { value: 'Processing', label: 'Đang xử lý' },
             { value: 'Shipped', label: 'Đã giao hàng' },
@@ -391,6 +413,7 @@ export default function ManageOrdersPage() {
     // Statistics - tính từ filteredOrders
     const stats = {
         total: filteredOrders.length,
+        awaitingPayment: filteredOrders.filter(o => ['AWAITINGPAYMENT', 'PAYMENTFAILED'].includes(o.status?.toUpperCase())).length,
         pending: filteredOrders.filter(o => ['PENDING', 'CONFIRMED'].includes(o.status?.toUpperCase())).length,
         processing: filteredOrders.filter(o => ['PROCESSING', 'SHIPPING', 'SHIPPED'].includes(o.status?.toUpperCase())).length,
         completed: filteredOrders.filter(o => ['DELIVERED', 'COMPLETED'].includes(o.status?.toUpperCase())).length,
@@ -460,11 +483,17 @@ export default function ManageOrdersPage() {
             </div>
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Tổng đơn hàng</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
                 </div>
+                {stats.awaitingPayment > 0 && (
+                    <div className="bg-orange-50 dark:bg-orange-900/10 rounded-xl shadow-sm p-4 border border-orange-200 dark:border-orange-800">
+                        <p className="text-sm text-orange-600 dark:text-orange-400 mb-1">⏳ Chờ thanh toán</p>
+                        <p className="text-2xl font-bold text-orange-600">{stats.awaitingPayment}</p>
+                    </div>
+                )}
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Chờ xử lý</p>
                     <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
@@ -751,6 +780,12 @@ export default function ManageOrdersPage() {
                                                         onClick={(e) => e.stopPropagation()}
                                                         className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer border-none ${statusConfig.color}`}
                                                     >
+                                                        {order.status === 'AwaitingPayment' && (
+                                                            <option value="AwaitingPayment">⏳ Chờ thanh toán</option>
+                                                        )}
+                                                        {order.status === 'PaymentFailed' && (
+                                                            <option value="PaymentFailed">❌ TT thất bại</option>
+                                                        )}
                                                         <option value="Pending">Chờ xử lý</option>
                                                         <option value="Processing">Đang xử lý</option>
                                                         <option value="Shipped">Đã giao hàng</option>
