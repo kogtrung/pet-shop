@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getProfile, updateProfile, changePassword, createProfile } from '../../api/profileApi';
 import toast from 'react-hot-toast';
@@ -300,7 +300,7 @@ export default function ProfilePage() {
                                     type="text"
                                     value={formData.username}
                                     disabled
-                                    className="w-full px-4 py-2 rounded-image border border-textDark/20 bg-softGray text-textDark/50 cursor-not-allowed"
+                                    className="w-full px-4 py-2 border border-gray-200 bg-gray-100 text-textDark/50 cursor-not-allowed"
                                 />
                                 <p className="mt-1 text-xs text-textDark/50">Tên đăng nhập không thể thay đổi</p>
                             </div>
@@ -416,14 +416,14 @@ export default function ProfilePage() {
                                     });
                                     setErrors({});
                                 }}
-                                className="flex items-center gap-2 px-6 py-2 bg-softGray text-textDark rounded-button hover:bg-softGray/80 transition-colors font-heading font-semibold"
+                                className="flex items-center gap-2 px-6 py-2 border border-gray-400 text-gray-700 hover:bg-gray-100 transition-colors font-semibold"
                             >
                                 <XMarkIcon className="w-4 h-4" strokeWidth={2} />
                                 Hủy
                             </button>
                             <button
                                 type="submit"
-                                className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-button hover:bg-primary-600 transition-colors font-heading font-semibold shadow-soft"
+                                className="flex items-center gap-2 px-6 py-2 border border-black bg-black text-white hover:bg-white hover:text-black transition-colors font-semibold"
                             >
                                 <CheckIcon className="w-4 h-4" strokeWidth={2} />
                                 Lưu thay đổi

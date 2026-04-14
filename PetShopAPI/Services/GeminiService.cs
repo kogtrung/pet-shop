@@ -13,7 +13,7 @@ public class GeminiService : IGeminiService
     private readonly IConfiguration _configuration;
     private readonly ILogger<GeminiService> _logger;
     private readonly string _apiKey;
-    private readonly string _defaultModel = "models/gemini-2.0-flash";
+    private readonly string _defaultModel = "models/gemini-2.5-flash";
 
     public GeminiService(HttpClient httpClient, IConfiguration configuration, ILogger<GeminiService> logger)
     {
@@ -56,7 +56,33 @@ public class GeminiService : IGeminiService
         var json = JsonSerializer.Serialize(request);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PostAsync(url, content);
+        HttpResponseMessage response = null!;
+        int maxRetries = 3;
+        int delayMs = 2000;
+
+        for (int i = 0; i < maxRetries; i++)
+        {
+            response = await _httpClient.PostAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                break;
+            }
+
+            if (i < maxRetries - 1 && 
+               (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable || 
+                response.StatusCode == System.Net.HttpStatusCode.TooManyRequests))
+            {
+                _logger.LogWarning("Gemini API overloaded (Status: {StatusCode}). Retrying {RetryCount}/{MaxRetries} in {Delay}ms...", 
+                                 response.StatusCode, i + 1, maxRetries - 1, delayMs);
+                await Task.Delay(delayMs);
+                delayMs += 1500; // Tăng thời gian chờ cho các lần lặp tiếp theo
+            }
+            else
+            {
+                break; // Tự động thoát nếu không phải lỗi overload hoặc đã hết lượt retry
+            }
+        }
 
         if (response.IsSuccessStatusCode)
         {
@@ -82,7 +108,7 @@ public class GeminiService : IGeminiService
                 }
             }
 
-            return "No valid response from AI.";
+            return "Xin lỗi, hệ thống AI của tôi đang gặp trục trặc kỹ thuật. Vui lòng thử lại sau.";
         }
         else
         {
@@ -113,9 +139,12 @@ public class GeminiService : IGeminiService
             
             foreach (var message in history)
             {
+                // Cập nhật: Tránh lỗi role 'assistant' không được hỗ trợ bởi Gemini API
+                string mappedRole = string.Equals(message.Role, "assistant", StringComparison.OrdinalIgnoreCase) ? "model" : message.Role;
+
                 historyContents.Add(new
                 {
-                    role = message.Role,
+                    role = mappedRole,
                     parts = new[] { new { text = message.Content } }
                 });
             }
@@ -134,7 +163,7 @@ public class GeminiService : IGeminiService
             var request = new
             {
                 contents = historyContents,
-                tools = tools,
+                tools = new[] { tools },
                 generationConfig = new
                 {
                     temperature = 0.7,
@@ -149,7 +178,33 @@ public class GeminiService : IGeminiService
             
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(url, content);
+            HttpResponseMessage response = null!;
+            int maxRetries = 3;
+            int delayMs = 2000;
+
+            for (int i = 0; i < maxRetries; i++)
+            {
+                response = await _httpClient.PostAsync(url, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    break;
+                }
+
+                if (i < maxRetries - 1 && 
+                   (response.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable || 
+                    response.StatusCode == System.Net.HttpStatusCode.TooManyRequests))
+                {
+                    _logger.LogWarning("Gemini API overloaded (Status: {StatusCode}). Retrying {RetryCount}/{MaxRetries} in {Delay}ms...", 
+                                     response.StatusCode, i + 1, maxRetries - 1, delayMs);
+                    await Task.Delay(delayMs);
+                    delayMs += 1500; // Tăng thời gian chờ cho các lần lặp tiếp theo
+                }
+                else
+                {
+                    break; // Tự động thoát nếu không phải lỗi overload hoặc đã hết lượt retry
+                }
+            }
 
             if (response.IsSuccessStatusCode)
             {
