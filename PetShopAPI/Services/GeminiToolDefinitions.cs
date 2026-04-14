@@ -15,7 +15,7 @@ public static class GeminiToolDefinitions
     {
         var tools = new
         {
-            function_declarations = new object[]
+            functionDeclarations = new object[]
             {
                 new
                 {

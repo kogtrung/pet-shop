@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -212,69 +212,98 @@ const Header = () => {
                                     <button
                                         onMouseEnter={() => setShowCategoryMenu(true)}
                                         onClick={() => setShowCategoryMenu(!showCategoryMenu)}
-                                        className="flex items-center space-x-2 px-3 py-2 text-textDark hover:text-primary font-medium transition-colors"
+                                        className="flex items-center space-x-1.5 px-3 py-2 text-black font-medium text-sm hover:bg-gray-100 transition-colors"
                                     >
-                                        <Bars3Icon className="w-5 h-5" strokeWidth={2} />
+                                        <Bars3Icon className="w-4 h-4" strokeWidth={2} />
                                         <span>Danh mục</span>
-                                        <ChevronDownIcon className="w-4 h-4" strokeWidth={2} />
+                                        <ChevronDownIcon className={`w-3.5 h-3.5 transition-transform duration-200 ${showCategoryMenu ? 'rotate-180' : ''}`} strokeWidth={2} />
                                     </button>
 
-                                    {/* Mega Menu */}
+                                    {/* Mega Menu — Sidebar + Content Grid */}
                                     {showCategoryMenu && (
                                         <div
                                             onMouseLeave={() => setShowCategoryMenu(false)}
-                                            className="absolute left-0 top-full mt-2 w-screen max-w-2xl bg-white rounded-card shadow-soft-lg border border-softGray p-4 z-50"
+                                            className="absolute left-0 top-full mt-0 bg-white border border-gray-200 shadow-lg z-50 flex"
+                                            style={{ width: '640px' }}
                                         >
-                                            <div className="grid grid-cols-3 gap-4">
+                                            {/* Sidebar trái — category cha */}
+                                            <div className="w-52 bg-gray-50 border-r border-gray-200 flex-shrink-0 py-2">
+                                                <p className="px-4 pt-1 pb-2 text-[10px] uppercase tracking-widest font-semibold text-gray-400">Tất cả danh mục</p>
                                                 {organizeCategories().map((parent) => (
-                                                    <div key={parent.id} className="space-y-3">
-                                                        <Link
-                                                            to={`/products?categoryId=${parent.id}`}
-                                                            onClick={() => setShowCategoryMenu(false)}
-                                                            className="block text-lg font-heading font-bold text-primary hover:text-primary-600 transition-colors"
-                                                        >
-                                                            {parent.name}
-                                                        </Link>
+                                                    <Link
+                                                        key={parent.id}
+                                                        to={`/products?categoryId=${parent.id}`}
+                                                        onClick={() => setShowCategoryMenu(false)}
+                                                        className="flex items-center justify-between px-4 py-2.5 text-sm font-medium text-black hover:bg-black hover:text-white transition-colors group"
+                                                    >
+                                                        <span>{parent.name}</span>
                                                         {parent.children && parent.children.length > 0 && (
-                                                            <ul className="space-y-2 ml-3">
-                                                                {parent.children.map((child) => (
-                                                                    <li key={child.id}>
+                                                            <ChevronDownIcon className="w-3.5 h-3.5 -rotate-90 text-gray-400 group-hover:text-white" strokeWidth={2} />
+                                                        )}
+                                                    </Link>
+                                                ))}
+                                                {organizeCategories().length === 0 && (
+                                                    <p className="px-4 py-6 text-sm text-gray-400 text-center">Chưa có danh mục</p>
+                                                )}
+                                            </div>
+
+                                            {/* Cột phải — subcategories dạng grid + promo */}
+                                            <div className="flex-1 p-5 flex flex-col justify-between" style={{ minHeight: '280px' }}>
+                                                <div className="space-y-4 overflow-y-auto" style={{ maxHeight: '240px' }}>
+                                                    {organizeCategories().map((parent) => (
+                                                        parent.children && parent.children.length > 0 ? (
+                                                            <div key={parent.id}>
+                                                                <p className="text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-2 pb-1 border-b border-gray-100">{parent.name}</p>
+                                                                <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+                                                                    {parent.children.map((child) => (
                                                                         <Link
+                                                                            key={child.id}
                                                                             to={`/products?categoryId=${child.id}`}
                                                                             onClick={() => setShowCategoryMenu(false)}
-                                                                            className="text-sm text-textDark/70 hover:text-primary transition-colors"
+                                                                            className="text-sm text-gray-600 hover:text-black hover:underline transition-colors py-0.5 truncate"
                                                                         >
                                                                             {child.name}
                                                                         </Link>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        )}
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        ) : null
+                                                    ))}
+                                                </div>
 
+                                                {/* Promo strip */}
+                                                <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                                                    <div>
+                                                        <p className="text-xs font-semibold text-black">🎁 Ưu đãi hôm nay</p>
+                                                        <p className="text-xs text-gray-500 mt-0.5">Miễn phí ship cho đơn từ 1.000.000₫</p>
                                                     </div>
-                                                ))}
+                                                    <Link
+                                                        to="/products"
+                                                        onClick={() => setShowCategoryMenu(false)}
+                                                        className="text-xs border border-black px-3 py-1.5 text-black hover:bg-black hover:text-white transition-colors whitespace-nowrap"
+                                                    >
+                                                        Xem tất cả →
+                                                    </Link>
+                                                </div>
                                             </div>
-                                            {organizeCategories().length === 0 && (
-                                                <p className="text-gray-500 dark:text-gray-400 text-center py-8">Chưa có danh mục nào</p>
-                                            )}
                                         </div>
                                     )}
                                 </div>
                                 <Link
                                     to="/products"
-                                    className="text-sm font-medium text-textDark hover:text-primary transition-colors"
+                                    className="text-sm font-medium text-black hover:underline transition-colors"
                                 >
                                     Sản phẩm
                                 </Link>
                                 <Link
                                     to="/services"
-                                    className="text-sm font-medium text-textDark hover:text-primary transition-colors"
+                                    className="text-sm font-medium text-black hover:underline transition-colors"
                                 >
                                     Dịch vụ
                                 </Link>
                                 <Link
                                     to="/about"
-                                    className="text-sm font-medium text-textDark hover:text-primary transition-colors"
+                                    className="text-sm font-medium text-black hover:underline transition-colors"
                                 >
                                     Giới thiệu
                                 </Link>
@@ -291,7 +320,7 @@ const Header = () => {
                                     />
                                     <button
                                         type="submit"
-                                        className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 text-primary hover:text-primary-600 transition-colors"
+                                        className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 text-primary hover:text-gray-600-600 transition-colors"
                                     >
                                         <MagnifyingGlassIcon className="w-4 h-4" strokeWidth={2} />
                                     </button>
@@ -652,10 +681,10 @@ const Header = () => {
 
                         {/* Mobile Navigation Links */}
                         <div className="space-y-1 px-4">
-                            <Link to="/products" className="block py-2 text-textDark hover:text-primary transition-colors">Sản phẩm</Link>
-                            <Link to="/services" className="block py-2 text-textDark hover:text-primary transition-colors">Dịch vụ</Link>
-                            <Link to="/about" className="block py-2 text-textDark hover:text-primary transition-colors">Giới thiệu</Link>
-                            <Link to="/contact" className="block py-2 text-textDark hover:text-primary transition-colors">Liên hệ</Link>
+                            <Link to="/products" className="block py-2 text-textDark hover:text-gray-600 transition-colors">Sản phẩm</Link>
+                            <Link to="/services" className="block py-2 text-textDark hover:text-gray-600 transition-colors">Dịch vụ</Link>
+                            <Link to="/about" className="block py-2 text-textDark hover:text-gray-600 transition-colors">Giới thiệu</Link>
+                            <Link to="/contact" className="block py-2 text-textDark hover:text-gray-600 transition-colors">Liên hệ</Link>
                         </div>
 
                         {!user && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { fetchMyOrderHistory, fetchMyOrderById, cancelOrder } from '../../api/orderApi';
@@ -198,52 +198,52 @@ export default function OrderHistoryPage() {
         const configs = {
             AWAITINGPAYMENT: {
                 label: 'Chờ thanh toán',
-                color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300',
+                color: 'bg-orange-50 text-orange-700 border border-orange-200',
                 icon: ClockIcon
             },
             PAYMENTFAILED: {
                 label: 'Thanh toán thất bại',
-                color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
+                color: 'bg-red-50 text-red-700 border border-red-200',
                 icon: XCircleIcon
             },
             PENDING: {
                 label: 'Chờ xử lý',
-                color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300',
+                color: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
                 icon: ClockIcon
             },
             CONFIRMED: {
                 label: 'Đã xác nhận',
-                color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
+                color: 'bg-blue-50 text-blue-700 border border-blue-200',
                 icon: CheckCircleIcon
             },
             PROCESSING: {
                 label: 'Đang xử lý',
-                color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-300',
+                color: 'bg-gray-100 text-indigo-800',
                 icon: ClockIcon
             },
             SHIPPING: {
                 label: 'Đang giao',
-                color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300',
+                color: 'bg-gray-100 text-gray-800 border border-gray-300',
                 icon: TruckIcon
             },
             SHIPPED: {
                 label: 'Đã giao hàng',
-                color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300',
+                color: 'bg-gray-100 text-gray-800 border border-gray-300',
                 icon: TruckIcon
             },
             DELIVERED: {
                 label: 'Đã giao',
-                color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300',
+                color: 'bg-green-50 text-green-700 border border-green-200',
                 icon: CheckCircleIcon
             },
             CANCELLED: {
                 label: 'Đã hủy',
-                color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
+                color: 'bg-red-50 text-red-700 border border-red-200',
                 icon: XCircleIcon
             },
             COMPLETED: {
                 label: 'Hoàn thành',
-                color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300',
+                color: 'bg-green-50 text-green-700 border border-green-200',
                 icon: CheckCircleIcon
             }
         };
@@ -355,21 +355,21 @@ export default function OrderHistoryPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+        <div className="min-h-screen bg-white py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center">
-                        <ShoppingBagIcon className="w-8 h-8 mr-3 text-indigo-600" />
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+                        <ShoppingBagIcon className="w-8 h-8 mr-3" />
                         Lịch sử đơn hàng
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <p className="text-gray-600">
                         Quản lý và theo dõi tất cả đơn hàng của bạn
                     </p>
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 mb-6">
+                <div className="bg-white rounded-none shadow-sm p-4 mb-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         {/* Search */}
                         <div className="flex-1 relative">
@@ -379,7 +379,7 @@ export default function OrderHistoryPage() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Tìm kiếm theo mã đơn, địa chỉ..."
-                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                                className="w-full pl-10 pr-4 py-2 rounded-none border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-black"
                             />
                         </div>
 
@@ -387,7 +387,7 @@ export default function OrderHistoryPage() {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => setShowFilters(!showFilters)}
-                                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 rounded-none border border-gray-300 hover:bg-gray-50 transition-colors"
                             >
                                 <FunnelIcon className="w-5 h-5" />
                                 <span className="hidden sm:inline">Lọc</span>
@@ -399,7 +399,7 @@ export default function OrderHistoryPage() {
                                     setStatusFilter(e.target.value);
                                     setCurrentPage(1);
                                 }}
-                                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                                className="px-4 py-2 rounded-none border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-black"
                             >
                                 {statusOptions.map(option => (
                                     <option key={option.value} value={option.value}>
@@ -415,20 +415,20 @@ export default function OrderHistoryPage() {
                 {loading ? (
                     <div className="space-y-4">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 animate-pulse">
-                                <div className="h-6 bg-gray-300 dark:bg-gray-600 rounded w-1/4 mb-4"></div>
-                                <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/2 mb-2"></div>
-                                <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+                            <div key={i} className="bg-white rounded-none shadow-sm p-6 animate-pulse">
+                                <div className="h-6 bg-gray-300 rounded w-1/4 mb-4"></div>
+                                <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
+                                <div className="h-4 bg-gray-300 rounded w-3/4"></div>
                             </div>
                         ))}
                     </div>
                 ) : filteredOrders.length === 0 ? (
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-12 text-center">
+                    <div className="bg-white rounded-none shadow-sm p-12 text-center">
                         <ShoppingBagIcon className="w-20 h-20 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
                             Chưa có đơn hàng nào
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                        <p className="text-gray-600 mb-6">
                             {searchQuery || statusFilter !== 'all' 
                                 ? 'Không tìm thấy đơn hàng phù hợp với bộ lọc'
                                 : 'Bạn chưa có đơn hàng nào. Hãy bắt đầu mua sắm!'}
@@ -436,7 +436,7 @@ export default function OrderHistoryPage() {
                         {!searchQuery && statusFilter === 'all' && (
                             <button
                                 onClick={() => navigate('/products')}
-                                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                                className="px-6 py-3 border border-black bg-black text-white hover:bg-white hover:text-black transition-colors"
                             >
                                 Mua sắm ngay
                             </button>
@@ -453,27 +453,27 @@ export default function OrderHistoryPage() {
                                 return (
                                     <div 
                                         key={order.id} 
-                                        className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                                        className="bg-white rounded-none shadow-sm hover:shadow-md transition-shadow overflow-hidden"
                                     >
                                         <div className="p-6">
                                             {/* Order Header */}
                                             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                                                 <div className="flex items-center gap-3 mb-2 md:mb-0">
-                                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                                    <h3 className="text-lg font-semibold text-gray-900">
                                                         Đơn hàng {order.orderCode || order.posCode || 'Chưa có mã'}
                                                     </h3>
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusConfig.color} flex items-center gap-1`}>
+                                                    <span className={`px-3 py-1 rounded-none text-xs font-medium ${statusConfig.color} flex items-center gap-1`}>
                                                         <StatusIcon className="w-4 h-4" />
                                                         {statusConfig.label}
                                                     </span>
                                                     {/* Badge thanh toán cho đơn online */}
                                                     {order.paymentStatus && (
-                                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                                        <span className={`px-2 py-0.5 rounded-none text-xs font-medium ${
                                                             order.paymentStatus === 'Paid' 
-                                                                ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
+                                                                ? 'bg-green-50 text-green-700 border border-green-200'
                                                                 : order.paymentStatus === 'Expired'
-                                                                    ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                                                                    : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
+                                                                    ? 'bg-gray-100 text-gray-600'
+                                                                    : 'bg-red-50 text-red-700 border border-red-200'
                                                         }`}>
                                                             {order.paymentStatus === 'Paid' ? '💳 Đã thanh toán' 
                                                                 : order.paymentStatus === 'Expired' ? '⏰ Hết hạn'
@@ -486,7 +486,7 @@ export default function OrderHistoryPage() {
                                                     {['AwaitingPayment', 'PaymentFailed'].includes(order.status) && order.paymentMethod === 'MOMO' && (
                                                         <button
                                                             onClick={() => handleRetryPayment(order.id)}
-                                                            className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors animate-pulse"
+                                                            className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-none hover:bg-pink-600 transition-colors animate-pulse"
                                                         >
                                                             <BanknotesIcon className="w-4 h-4" />
                                                             <span>Thanh toán ngay</span>
@@ -494,7 +494,7 @@ export default function OrderHistoryPage() {
                                                     )}
                                                     <button
                                                         onClick={() => handleViewDetails(order.id)}
-                                                        className="flex items-center gap-2 px-4 py-2 bg-indigo-100 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-indigo-900/30 transition-colors"
+                                                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-black rounded-none hover:bg-gray-200 transition-colors"
                                                     >
                                                         <EyeIcon className="w-4 h-4" />
                                                         <span className="hidden sm:inline">Chi tiết</span>
@@ -505,19 +505,19 @@ export default function OrderHistoryPage() {
                                                         
                                                         if (existingCancellation && existingCancellation.status === 'Pending') {
                                                             return (
-                                                                <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                                                                <span className="px-3 py-1 rounded-none text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
                                                                     Đã yêu cầu hủy (Chờ xử lý)
                                                                 </span>
                                                             );
                                                         } else if (existingCancellation && existingCancellation.status === 'Approved') {
                                                             return (
-                                                                <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                                                <span className="px-3 py-1 rounded-none text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                                                                     Đã hủy
                                                                 </span>
                                                             );
                                                         } else if (existingCancellation && existingCancellation.status === 'Rejected') {
                                                             return (
-                                                                <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                                                                <span className="px-3 py-1 rounded-none text-xs font-medium bg-red-50 text-red-700 border border-red-200">
                                                                     Yêu cầu hủy bị từ chối
                                                                 </span>
                                                             );
@@ -529,7 +529,7 @@ export default function OrderHistoryPage() {
                                                                         setCancellationForm({ reason: '' });
                                                                         setShowCancellationModal(true);
                                                                     }}
-                                                                    className="flex items-center gap-2 px-4 py-2 bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 rounded-lg hover:bg-orange-200 dark:hover:bg-orange-900/30 transition-colors"
+                                                                    className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-none hover:bg-orange-200 dark:hover:bg-orange-900/30 transition-colors"
                                                                 >
                                                                     <XMarkIcon className="w-4 h-4" />
                                                                     <span className="hidden sm:inline">Yêu cầu hủy</span>
@@ -553,7 +553,7 @@ export default function OrderHistoryPage() {
                                                                 'Cancelled': 'Đã hủy'
                                                             };
                                                             return (
-                                                                <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                                                <span className="px-3 py-1 rounded-none text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
                                                                     Đã yêu cầu ({returnStatusMap[existingReturn.status] || existingReturn.status})
                                                                 </span>
                                                             );
@@ -583,7 +583,7 @@ export default function OrderHistoryPage() {
                                                                             toast.error('Không thể tải chi tiết đơn hàng');
                                                                         }
                                                                     }}
-                                                                    className="flex items-center gap-2 px-4 py-2 bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 rounded-lg hover:bg-orange-200 dark:hover:bg-orange-900/30 transition-colors"
+                                                                    className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-700 rounded-none hover:bg-orange-200 dark:hover:bg-orange-900/30 transition-colors"
                                                                 >
                                                                     <ArrowPathIcon className="w-4 h-4" />
                                                                     <span className="hidden sm:inline">Yêu cầu đổi/trả</span>
@@ -600,8 +600,8 @@ export default function OrderHistoryPage() {
                                                 <div className="flex items-start gap-2">
                                                     <CalendarIcon className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
                                                     <div>
-                                                        <p className="text-gray-500 dark:text-gray-400">Ngày đặt</p>
-                                                        <p className="font-medium text-gray-900 dark:text-white">
+                                                        <p className="text-gray-500">Ngày đặt</p>
+                                                        <p className="font-medium text-gray-900">
                                                             {formatDate(order.createdAt)}
                                                         </p>
                                                     </div>
@@ -610,8 +610,8 @@ export default function OrderHistoryPage() {
                                                 <div className="flex items-start gap-2">
                                                     <ShoppingBagIcon className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
                                                     <div>
-                                                        <p className="text-gray-500 dark:text-gray-400">Số sản phẩm</p>
-                                                        <p className="font-bold text-lg text-indigo-600 dark:text-indigo-400">
+                                                        <p className="text-gray-500">Số sản phẩm</p>
+                                                        <p className="font-bold text-lg text-black">
                                                             {order.items?.length || 0} sản phẩm
                                                         </p>
                                                     </div>
@@ -620,8 +620,8 @@ export default function OrderHistoryPage() {
                                                 <div className="flex items-start gap-2">
                                                     <TruckIcon className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
                                                     <div>
-                                                        <p className="text-gray-500 dark:text-gray-400">Thanh toán</p>
-                                                        <p className="font-medium text-gray-900 dark:text-white">
+                                                        <p className="text-gray-500">Thanh toán</p>
+                                                        <p className="font-medium text-gray-900">
                                                             {order.paymentMethod || 'COD'}
                                                         </p>
                                                     </div>
@@ -630,12 +630,12 @@ export default function OrderHistoryPage() {
                                                 <div className="flex items-start gap-2">
                                                     <div className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5">💰</div>
                                                     <div>
-                                                        <p className="text-gray-500 dark:text-gray-400">Tổng tiền</p>
-                                                        <p className="font-bold text-lg text-indigo-600 dark:text-indigo-400">
+                                                        <p className="text-gray-500">Tổng tiền</p>
+                                                        <p className="font-bold text-lg text-black">
                                                             {order.total?.toLocaleString('vi-VN')} ₫
                                                         </p>
                                                         {order.promotionCode && (
-                                                            <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                                                            <p className="text-xs text-green-600 mt-1">
                                                                 Mã: {order.promotionCode}
                                                             </p>
                                                         )}
@@ -645,11 +645,11 @@ export default function OrderHistoryPage() {
 
                                             {/* Shipping Address */}
                                             {order.shippingAddress && (
-                                                <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                                                <div className="mt-4 p-3 bg-gray-50 rounded-none">
+                                                    <p className="text-xs text-gray-500 mb-1">
                                                         Địa chỉ giao hàng:
                                                     </p>
-                                                    <p className="text-sm text-gray-900 dark:text-white">
+                                                    <p className="text-sm text-gray-900">
                                                         {order.shippingAddress}
                                                     </p>
                                                 </div>
@@ -666,7 +666,7 @@ export default function OrderHistoryPage() {
                                 <button
                                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                     disabled={!canGoPrevious}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                    className="px-4 py-2 rounded-none border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
                                 >
                                     Trước
                                 </button>
@@ -676,7 +676,7 @@ export default function OrderHistoryPage() {
                                         <>
                                             <button
                                                 onClick={() => setCurrentPage(1)}
-                                                className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                                className="px-3 py-2 rounded-none border border-gray-300 hover:bg-gray-50"
                                             >
                                                 1
                                             </button>
@@ -687,20 +687,20 @@ export default function OrderHistoryPage() {
                                     {currentPage > 1 && (
                                         <button
                                             onClick={() => setCurrentPage(currentPage - 1)}
-                                            className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                            className="px-3 py-2 rounded-none border border-gray-300 hover:bg-gray-50"
                                         >
                                             {currentPage - 1}
                                         </button>
                                     )}
 
-                                    <button className="px-3 py-2 rounded-lg bg-indigo-600 text-white">
+                                    <button className="px-3 py-2 bg-black text-white">
                                         {currentPage}
                                     </button>
 
                                     {currentPage < totalPages && (
                                         <button
                                             onClick={() => setCurrentPage(currentPage + 1)}
-                                            className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                            className="px-3 py-2 rounded-none border border-gray-300 hover:bg-gray-50"
                                         >
                                             {currentPage + 1}
                                         </button>
@@ -711,7 +711,7 @@ export default function OrderHistoryPage() {
                                             {currentPage < totalPages - 2 && <span className="px-2 py-2">...</span>}
                                             <button
                                                 onClick={() => setCurrentPage(totalPages)}
-                                                className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                                className="px-3 py-2 rounded-none border border-gray-300 hover:bg-gray-50"
                                             >
                                                 {totalPages}
                                             </button>
@@ -722,7 +722,7 @@ export default function OrderHistoryPage() {
                                 <button
                                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                     disabled={!canGoNext}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                    className="px-4 py-2 rounded-none border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
                                 >
                                     Sau
                                 </button>
@@ -734,14 +734,14 @@ export default function OrderHistoryPage() {
                 {/* Order Details Modal */}
                 {showDetailsModal && selectedOrder && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-                            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex justify-between items-center">
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        <div className="bg-white rounded-none shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+                                <h2 className="text-2xl font-bold text-gray-900">
                                     Chi tiết đơn hàng {selectedOrder.orderCode || selectedOrder.posCode || 'Chưa có mã'}
                                 </h2>
                                 <button
                                     onClick={() => setShowDetailsModal(false)}
-                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                    className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-200"
                                 >
                                     <XMarkIcon className="w-6 h-6" />
                                 </button>
@@ -751,41 +751,41 @@ export default function OrderHistoryPage() {
                                 {/* Status & Date */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-sm text-gray-500 dark:text-gray-400">Trạng thái</label>
+                                        <label className="text-sm text-gray-500">Trạng thái</label>
                                         <div className="mt-1">
-                                            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusConfig(selectedOrder.status).color}`}>
+                                            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-none text-sm font-medium ${getStatusConfig(selectedOrder.status).color}`}>
                                                 {React.createElement(getStatusConfig(selectedOrder.status).icon, { className: 'w-4 h-4' })}
                                                 {getStatusConfig(selectedOrder.status).label}
                                             </span>
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="text-sm text-gray-500 dark:text-gray-400">Ngày đặt</label>
+                                        <label className="text-sm text-gray-500">Ngày đặt</label>
                                         <p className="mt-1 font-medium">{formatDate(selectedOrder.createdAt)}</p>
                                     </div>
                                     <div>
-                                        <label className="text-sm text-gray-500 dark:text-gray-400">Phương thức thanh toán</label>
+                                        <label className="text-sm text-gray-500">Phương thức thanh toán</label>
                                         <p className="mt-1 font-medium">{selectedOrder.paymentMethod || 'COD'}</p>
                                     </div>
                                     <div>
-                                        <label className="text-sm text-gray-500 dark:text-gray-400">Tạm tính</label>
-                                        <p className="mt-1 font-medium text-gray-900 dark:text-white">
+                                        <label className="text-sm text-gray-500">Tạm tính</label>
+                                        <p className="mt-1 font-medium text-gray-900">
                                             {selectedOrder.subTotal?.toLocaleString('vi-VN')} ₫
                                         </p>
                                     </div>
                                     {selectedOrder.discountAmount && selectedOrder.discountAmount > 0 && (
                                         <div>
-                                            <label className="text-sm text-gray-500 dark:text-gray-400">
+                                            <label className="text-sm text-gray-500">
                                                 Giảm giá {selectedOrder.promotionCode ? `(${selectedOrder.promotionCode})` : ''}
                                             </label>
-                                            <p className="mt-1 font-medium text-red-600 dark:text-red-400">
+                                            <p className="mt-1 font-medium text-red-600">
                                                 -{selectedOrder.discountAmount.toLocaleString('vi-VN')} ₫
                                             </p>
                                         </div>
                                     )}
                                     <div>
-                                        <label className="text-sm text-gray-500 dark:text-gray-400">Tổng tiền</label>
-                                        <p className="mt-1 text-xl font-bold text-indigo-600">
+                                        <label className="text-sm text-gray-500">Tổng tiền</label>
+                                        <p className="mt-1 text-xl font-bold text-black">
                                             {selectedOrder.total?.toLocaleString('vi-VN')} ₫
                                         </p>
                                     </div>
@@ -794,8 +794,8 @@ export default function OrderHistoryPage() {
                                 {/* Shipping Address */}
                                 {selectedOrder.shippingAddress && (
                                     <div>
-                                        <label className="text-sm text-gray-500 dark:text-gray-400">Địa chỉ giao hàng</label>
-                                        <p className="mt-1 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                        <label className="text-sm text-gray-500">Địa chỉ giao hàng</label>
+                                        <p className="mt-1 p-3 bg-gray-50 rounded-none">
                                             {selectedOrder.shippingAddress}
                                         </p>
                                     </div>
@@ -803,25 +803,25 @@ export default function OrderHistoryPage() {
 
                                 {/* Order Items */}
                                 <div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                                    <h3 className="font-semibold text-gray-900 mb-3">
                                         Sản phẩm ({selectedOrder.items?.length || 0})
                                     </h3>
                                     <div className="space-y-3">
                                         {selectedOrder.items?.map((item, index) => (
                                             <div 
                                                 key={index} 
-                                                className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                                                className="flex items-center justify-between p-4 bg-gray-50 rounded-none"
                                             >
                                                 <div className="flex-1">
-                                                    <p className="font-medium text-gray-900 dark:text-white">
+                                                    <p className="font-medium text-gray-900">
                                                         {item.productName || `Sản phẩm #${item.productId}`}
                                                     </p>
-                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                    <p className="text-sm text-gray-600">
                                                         Đơn giá: {item.unitPrice?.toLocaleString('vi-VN')} ₫ × {item.quantity}
                                                     </p>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="font-bold text-gray-900 dark:text-white">
+                                                    <p className="font-bold text-gray-900">
                                                         {(item.unitPrice * item.quantity).toLocaleString('vi-VN')} ₫
                                                     </p>
                                                 </div>
@@ -833,22 +833,22 @@ export default function OrderHistoryPage() {
                                 {/* Notes */}
                                 {selectedOrder.notes && (
                                     <div>
-                                        <label className="text-sm text-gray-500 dark:text-gray-400">Ghi chú</label>
-                                        <p className="mt-1 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                        <label className="text-sm text-gray-500">Ghi chú</label>
+                                        <p className="mt-1 p-3 bg-gray-50 rounded-none">
                                             {selectedOrder.notes}
                                         </p>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-6 flex justify-end gap-3">
+                            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 flex justify-end gap-3">
                                 {['PENDING', 'CONFIRMED'].includes(selectedOrder.status?.toUpperCase()) && (
                                     <button
                                         onClick={() => {
                                             setShowDetailsModal(false);
                                             handleCancelOrder(selectedOrder.id);
                                         }}
-                                        className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                        className="px-6 py-2 bg-red-600 text-white rounded-none hover:bg-red-700 transition-colors"
                                     >
                                         Hủy đơn hàng
                                     </button>
@@ -868,7 +868,7 @@ export default function OrderHistoryPage() {
                                             'Cancelled': 'Đã hủy'
                                         };
                                         return (
-                                            <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                            <span className="px-3 py-1 rounded-none text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
                                                 Đã yêu cầu ({returnStatusMap[existingReturn.status] || existingReturn.status})
                                             </span>
                                         );
@@ -898,7 +898,7 @@ export default function OrderHistoryPage() {
                                                         toast.error('Không thể tải chi tiết đơn hàng');
                                                     }
                                                 }}
-                                                className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                                                className="px-6 py-2 bg-orange-600 text-white rounded-none hover:bg-orange-700 transition-colors"
                                             >
                                                 <ArrowPathIcon className="w-5 h-5 inline mr-2" />
                                                 Yêu cầu đổi trả
@@ -909,7 +909,7 @@ export default function OrderHistoryPage() {
                                 })()}
                                 <button
                                     onClick={() => setShowDetailsModal(false)}
-                                    className="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-none hover:bg-gray-300 transition-colors"
                                 >
                                     Đóng
                                 </button>
@@ -921,9 +921,9 @@ export default function OrderHistoryPage() {
                 {/* Return Request Modal for User */}
                 {showReturnModal && selectedOrder && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex justify-between items-center">
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        <div className="bg-white rounded-none shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+                                <h2 className="text-2xl font-bold text-gray-900">
                                     Yêu cầu đổi trả - Đơn hàng {selectedOrder.orderCode || selectedOrder.posCode || 'Chưa có mã'}
                                 </h2>
                                 <button
@@ -935,7 +935,7 @@ export default function OrderHistoryPage() {
                                             items: []
                                         });
                                     }}
-                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                    className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-200"
                                 >
                                     <XMarkIcon className="w-6 h-6" />
                                 </button>
@@ -944,13 +944,13 @@ export default function OrderHistoryPage() {
                             <div className="p-6 space-y-6">
                                 {/* Loại đổi trả */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Loại yêu cầu *
                                     </label>
                                     <select
                                         value={returnForm.returnType}
                                         onChange={(e) => setReturnForm({ ...returnForm, returnType: e.target.value })}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-none bg-white text-gray-900"
                                     >
                                         <option value="Return">Trả hàng</option>
                                         <option value="Exchange">Đổi hàng</option>
@@ -959,7 +959,7 @@ export default function OrderHistoryPage() {
 
                                 {/* Lý do đổi trả */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Lý do đổi trả *
                                     </label>
                                     <textarea
@@ -967,28 +967,28 @@ export default function OrderHistoryPage() {
                                         onChange={(e) => setReturnForm({ ...returnForm, reason: e.target.value })}
                                         placeholder="Vui lòng mô tả chi tiết lý do đổi trả (ví dụ: sản phẩm bị lỗi, giao sai hàng, không đúng mô tả...)"
                                         rows={4}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-none bg-white text-gray-900"
                                     />
                                 </div>
 
                                 {/* Danh sách sản phẩm */}
                                 <div>
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
                                         Sản phẩm cần đổi trả
                                     </h3>
                                     <div className="space-y-3">
                                         {returnForm.items.map((item, index) => (
-                                            <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                                            <div key={index} className="border border-gray-200 rounded-none p-4">
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div className="flex-1">
-                                                        <p className="font-medium text-gray-900 dark:text-white">{item.productName}</p>
-                                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                        <p className="font-medium text-gray-900">{item.productName}</p>
+                                                        <p className="text-sm text-gray-500">
                                                             Số lượng đã mua: {item.maxQuantity}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div className="mt-3">
-                                                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                    <label className="block text-xs font-medium text-gray-700 mb-1">
                                                         Số lượng muốn trả
                                                     </label>
                                                     <input
@@ -1001,7 +1001,7 @@ export default function OrderHistoryPage() {
                                                             newItems[index].quantity = Math.max(0, Math.min(parseInt(e.target.value) || 0, item.maxQuantity));
                                                             setReturnForm({ ...returnForm, items: newItems });
                                                         }}
-                                                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                                                        className="w-full px-2 py-1 border border-gray-300 rounded bg-white text-gray-900 text-sm"
                                                     />
                                                 </div>
                                             </div>
@@ -1010,15 +1010,15 @@ export default function OrderHistoryPage() {
                                 </div>
 
                                 {/* Thông báo */}
-                                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                                <div className="bg-blue-50 border border-blue-200 dark:border-blue-800 rounded-none p-4">
+                                    <p className="text-sm text-blue-800">
                                         <strong>Lưu ý:</strong> Yêu cầu đổi trả của bạn sẽ được xem xét bởi nhân viên. 
                                         Vui lòng giữ nguyên bao bì và sản phẩm để đảm bảo quy trình đổi trả diễn ra thuận lợi.
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-6 flex justify-end gap-3">
+                            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 flex justify-end gap-3">
                                 <button
                                     onClick={() => {
                                         setShowReturnModal(false);
@@ -1028,7 +1028,7 @@ export default function OrderHistoryPage() {
                                             items: []
                                         });
                                     }}
-                                    className="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-none hover:bg-gray-300 transition-colors"
                                 >
                                     Hủy
                                 </button>
@@ -1081,7 +1081,7 @@ export default function OrderHistoryPage() {
                                             toast.error(error.response?.data?.error || 'Không thể gửi yêu cầu đổi trả');
                                         }
                                     }}
-                                    className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                                    className="px-6 py-2 bg-orange-600 text-white rounded-none hover:bg-orange-700 transition-colors"
                                 >
                                     Gửi yêu cầu
                                 </button>
@@ -1093,9 +1093,9 @@ export default function OrderHistoryPage() {
                 {/* Cancellation Request Modal */}
                 {showCancellationModal && selectedOrder && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex justify-between items-center">
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        <div className="bg-white rounded-none shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+                                <h2 className="text-2xl font-bold text-gray-900">
                                     Yêu cầu hủy đơn - Đơn hàng {selectedOrder.orderCode || selectedOrder.posCode || 'Chưa có mã'}
                                 </h2>
                                 <button
@@ -1112,29 +1112,29 @@ export default function OrderHistoryPage() {
 
                             <div className="p-6 space-y-6">
                                 {/* Order Info */}
-                                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                                <div className="bg-gray-50 rounded-none p-4">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
                                         Thông tin đơn hàng
                                     </h3>
                                     <div className="space-y-2 text-sm">
                                         <p>
-                                            <span className="font-medium text-gray-700 dark:text-gray-300">Mã đơn:</span>{' '}
-                                            <span className="text-gray-900 dark:text-white">{selectedOrder.orderCode || selectedOrder.posCode || `#${selectedOrder.id}`}</span>
+                                            <span className="font-medium text-gray-700">Mã đơn:</span>{' '}
+                                            <span className="text-gray-900">{selectedOrder.orderCode || selectedOrder.posCode || `#${selectedOrder.id}`}</span>
                                         </p>
                                         <p>
-                                            <span className="font-medium text-gray-700 dark:text-gray-300">Tổng tiền:</span>{' '}
-                                            <span className="text-gray-900 dark:text-white">{selectedOrder.total?.toLocaleString('vi-VN')} ₫</span>
+                                            <span className="font-medium text-gray-700">Tổng tiền:</span>{' '}
+                                            <span className="text-gray-900">{selectedOrder.total?.toLocaleString('vi-VN')} ₫</span>
                                         </p>
                                         <p>
-                                            <span className="font-medium text-gray-700 dark:text-gray-300">Trạng thái:</span>{' '}
-                                            <span className="text-gray-900 dark:text-white">{selectedOrder.status}</span>
+                                            <span className="font-medium text-gray-700">Trạng thái:</span>{' '}
+                                            <span className="text-gray-900">{selectedOrder.status}</span>
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Cancellation Reason */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Lý do hủy đơn <span className="text-red-500">*</span>
                                     </label>
                                     <textarea
@@ -1142,33 +1142,33 @@ export default function OrderHistoryPage() {
                                         onChange={(e) => setCancellationForm({ ...cancellationForm, reason: e.target.value })}
                                         placeholder="Vui lòng mô tả lý do bạn muốn hủy đơn hàng này..."
                                         rows={4}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-none bg-white text-gray-900"
                                     />
                                 </div>
 
                                 {/* Notice */}
-                                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                                    <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                                <div className="bg-yellow-50 border border-yellow-200 dark:border-yellow-800 rounded-none p-4">
+                                    <p className="text-sm text-yellow-800">
                                         <strong>Lưu ý:</strong> Yêu cầu hủy đơn của bạn sẽ được xem xét bởi nhân viên. 
                                         Chỉ có thể yêu cầu hủy đơn khi trạng thái đơn hàng là "Chờ xử lý" hoặc "Đang xử lý".
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-6 flex justify-end gap-3">
+                            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 flex justify-end gap-3">
                                 <button
                                     onClick={() => {
                                         setShowCancellationModal(false);
                                         setCancellationForm({ reason: '' });
                                         setSelectedOrder(null);
                                     }}
-                                    className="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-none hover:bg-gray-300 transition-colors"
                                 >
                                     Hủy
                                 </button>
                                 <button
                                     onClick={handleRequestCancellation}
-                                    className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                                    className="px-6 py-2 bg-orange-600 text-white rounded-none hover:bg-orange-700 transition-colors"
                                 >
                                     Gửi yêu cầu hủy
                                 </button>
